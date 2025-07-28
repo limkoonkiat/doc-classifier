@@ -26,7 +26,7 @@ This project is a Streamlit application designed to classify documents based on 
 
 3. Install the required packages:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements.txt --index-url https://pypi.org/simple
    ```
 4. Run the application:
    ```bash
