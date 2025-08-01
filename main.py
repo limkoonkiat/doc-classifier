@@ -1,8 +1,8 @@
-import streamlit as st
 import pandas as pd
-from logic.query_handler import process_user_message
+import streamlit as st
 from docx import Document
 
+from logic.query_handler import process_user_message
 
 st.title('Main Page')
 

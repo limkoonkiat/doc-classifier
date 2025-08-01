@@ -1,10 +1,12 @@
 from helper_functions import llm
 
+
 def generate_response(user_message):
     delimiter = "####"
 
     system_message = f"""
-
+    You are a data classification assistant helping the company to classify documents based on . 
+    Your task is to classify the user's input based on the provided context.
     """
 
     messages = [
@@ -18,6 +20,7 @@ def generate_response(user_message):
     response_to_user = response_to_user.split(delimiter)[-1]
     return response_to_user
 
-def process_user_message(user_input):
-    reply = generate_response(user_input)
+
+def process_user_message(user_message):
+    reply = generate_response(user_message)
     return reply
