@@ -1,6 +1,8 @@
 # Document Security and Sensitivity Classifier
 
-This project is a Streamlit application designed to classify documents based on their security and sensitivity levels.
+This project is a Streamlit application designed to classify documents based on their security and sensitivity levels. 
+
+Note: This application uses a mock classification framework, do not use for real world classifications. 
 
 # Getting Started
 
