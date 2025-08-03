@@ -1,14 +1,13 @@
 import streamlit as st
 
-from helper_functions.file_helpers import (load_knowledge_base,
-                                           process_uploaded_file)
+from utils.file_helpers import (load_knowledge_base,
+                                process_uploaded_file)
 
 st.title('Classify your File')
 
 st.write("Upload your file for classification.")
 
-if st.button('Load Data Classifications Guide'):
-    load_knowledge_base()
+load_knowledge_base()
 
 file_uploader_label = "Choose a file"
 allowed_file_types = ["txt", "docx"]
@@ -19,5 +18,3 @@ uploaded_file = st.file_uploader(file_uploader_label, type=allowed_file_types, a
 if uploaded_file is not None:
     st.write(f"File '{uploaded_file.name}' uploaded successfully.")
     doc = process_uploaded_file(uploaded_file)
-    print(doc)
-    print(doc[0])

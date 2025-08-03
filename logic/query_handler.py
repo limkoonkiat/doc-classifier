@@ -1,4 +1,4 @@
-from helper_functions import llm
+from utils import llm
 
 
 def generate_response(user_message):
