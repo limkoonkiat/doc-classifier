@@ -1,7 +1,13 @@
+import sys
+
 import streamlit as st
 
 from logic import submit_handler
 from utils import vectordb_helpers
+
+__import__("pysqlite3")
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+
 
 st.title('Data Classification Assistant')
 
