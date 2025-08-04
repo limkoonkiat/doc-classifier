@@ -208,3 +208,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+data/documents.txt
+data/~$ta Classification Guide.docx

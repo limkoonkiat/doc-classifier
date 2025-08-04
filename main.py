@@ -1,38 +1,57 @@
 import streamlit as st
-import pandas as pd
-from logic.query_handler import process_user_message
-from docx import Document
 
+from logic import submit_handler
+from utils import vectordb_helpers
 
-st.title('Main Page')
+st.title('Data Classification Assistant')
 
-form = st.form(key='form')
-form.subheader("Prompt")
+st.subheader("Enter your text or upload a file for classification")
 
-# Load the document
-doc = Document('data/cases.docx')
+tab1, tab2 = st.tabs(["Text Input", "File Upload"])
 
-# Extract the table
-table = doc.tables[0]  # Assuming you want the first table
+with tab1:
+    with st.form("text_input_form"):
+        st.header("Enter your text below.")
+        st.text_area("Enter your text here:", height=200, key="text_input")
+        submitted = st.form_submit_button(
+            "Submit", on_click=submit_handler.submit_text_input)
 
-# Create a list to hold the data
-data = []
+with tab2:
+    with st.form("file_upload_form"):
+        st.header("Upload your file below.")
+        file_uploader_label = "Choose a file"
+        allowed_file_types = ["txt", "docx"]
 
-# Iterate through the rows in the table
-for row in table.rows:
-    data.append([cell.text for cell in row.cells])
+        uploaded_file = st.file_uploader(file_uploader_label, type=allowed_file_types, accept_multiple_files=False, key=None, help=None,
+                                         on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible", width="stretch")
 
-# Create a DataFrame
-columns = data[0]  # Assuming the first row is the header
-mock_data = pd.DataFrame(data[1:], columns=columns)
+        # if uploaded_file is not None:
+        # st.write(f"File '{uploaded_file.name}' uploaded successfully.")
+        # doc = file_helpers.process_uploaded_file(uploaded_file)
 
-df = pd.DataFrame(mock_data)
-st.write(df)
+        submitted = st.form_submit_button(
+            "Submit", on_click=submit_handler.submit_uploaded_file)
 
+if submitted:
+    st.toast("Form submitted!")
 
-user_prompt = form.text_area("Enter your prompt here:", height=200)
+st.subheader("Classification Results")
+st.code(submit_handler.get_classification_result(), language=None)
 
-if form.form_submit_button("Submit"):
-    st.toast(f"User Input Submitted - {user_prompt}")
-    response = process_user_message(user_prompt)
-    st.write(response)
+col1, col2 = st.columns(2, border=True)
+
+with col1:
+    st.subheader("Security Classification Reasoning")
+    st.code(st.session_state.get("security_reasoning", "N/A"),
+            language=None, wrap_lines=True)
+
+with col2:
+    st.subheader("Sensitivity Classification Reasoning")
+    st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
+            language=None, wrap_lines=True)
+
+st.subheader("Downgrade your classification")
+with st.container(border=True):
+    st.write(st.session_state.get("document_text", "N/A"))
+
+vector_db = vectordb_helpers.load_knowledge_base()
