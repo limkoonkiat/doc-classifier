@@ -46,7 +46,7 @@ def get_completion(prompt, model="gpt-4o-mini", temperature=0, top_p=1.0, max_to
     return response.choices[0].message.content
 
 
-def get_completion_by_messages(messages, model="gpt-4o-mini", temperature=0, top_p=1.0, max_tokens=1024, n=1):
+def get_completion_by_messages(messages, model="gpt-4o-mini", temperature=0.2, top_p=0.6, max_tokens=1024, n=1):
     # Note that this function directly take in "messages" as the parameter.
     response = client.chat.completions.create(
         model=model,
