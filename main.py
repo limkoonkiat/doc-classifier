@@ -1,7 +1,9 @@
+from json import load
+
 import streamlit as st
 
 from logic import submit_handler
-from utils import vectordb_helpers
+from utils.vectordb_helpers import load_knowledge_base
 
 st.title('Data Classification Assistant')
 
@@ -14,7 +16,7 @@ with tab1:
         st.header("Enter your text below.")
         st.text_area("Enter your text here:", height=200, key="text_input")
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_text_input)
+            "Submit", on_click=submit_handler.submit_text_input, args=(st.session_state.get('text_input'),))
 
 with tab2:
     with st.form("file_upload_form"):
@@ -22,18 +24,18 @@ with tab2:
         file_uploader_label = "Choose a file"
         allowed_file_types = ["txt", "docx"]
 
-        uploaded_file = st.file_uploader(file_uploader_label, type=allowed_file_types, accept_multiple_files=False, key=None, help=None,
+        uploaded_file = st.file_uploader(file_uploader_label, type=allowed_file_types, accept_multiple_files=False, key="uploaded_file", help=None,
                                          on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible", width="stretch")
 
-        # if uploaded_file is not None:
-        # st.write(f"File '{uploaded_file.name}' uploaded successfully.")
-        # doc = file_helpers.process_uploaded_file(uploaded_file)
+        if uploaded_file is not None:
+            st.write(f"File '{uploaded_file.name}' uploaded successfully.")
 
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_uploaded_file)
+            "Submit", on_click=submit_handler.submit_uploaded_file, args=(uploaded_file,))
 
 if submitted:
     st.toast("Form submitted!")
+
 
 st.subheader("Classification Results")
 st.code(submit_handler.get_classification_result(), language=None)
@@ -54,4 +56,4 @@ st.subheader("Downgrade your classification")
 with st.container(border=True):
     st.write(st.session_state.get("document_text", "N/A"))
 
-vector_db = vectordb_helpers.load_knowledge_base()
+load_knowledge_base()
