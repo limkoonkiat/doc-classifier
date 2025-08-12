@@ -7,44 +7,43 @@ from langchain_community.document_loaders import Docx2txtLoader, TextLoader
 from logic import query_handler
 
 
-def submit_text_input():
-    if 'text_input' in st.session_state:
-        text_input = st.session_state['text_input']
-        print("text input")
+def submit_text_input(text_input):
+    if not text_input:
+        st.error("Please enter some text before submitting.")
+        return
 
-        if not text_input:
-            st.error("Please enter some text before submitting.")
-            return
-
-        # Process the input text
-        response = query_handler.generate_rag_response(
-            st.session_state['text_input'])
-        print(len(response.get("source_documents")))
-        save_result(response)
+    response = query_handler.generate_rag_response(text_input)
+    save_result(response)
 
 
-def submit_uploaded_file():
-    return
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as temp_file:
-        temp_file.write(uploaded_file.getvalue())
-        print(temp_file)
-        location = temp_file.name
+def submit_uploaded_file(uploaded_file):
+    if uploaded_file is None:
+        st.error("Please upload a file before submitting.")
+        return
 
-    file_type = uploaded_file.type
-    try:
-        if file_type == 'text/plain':
-            loader = TextLoader(location)
-        elif file_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            loader = Docx2txtLoader(location)
-        else:
-            return None
+    file_extension = uploaded_file.name.split('.')[-1].lower()
 
-        document = loader.load()
-        return document
+    if file_extension not in ['txt', 'docx']:
+        st.error("Unsupported file format. Please upload a supported file.")
+        return
 
-    except Exception as e:
-        raise ValueError(
-            "Unsupported file format. Please upload a .docx file.") from e
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file_extension}") as temp_file:
+        temp_file.write(uploaded_file.read())
+        temp_path = temp_file.name
+
+    if file_extension == 'txt':
+        loader = TextLoader(temp_path, encoding='utf-8')
+    elif file_extension == 'docx':
+        loader = Docx2txtLoader(temp_path)
+    else:
+        return None
+
+    documents = loader.load()
+
+    full_text = "".join([doc.page_content for doc in documents])
+
+    response = query_handler.generate_rag_response(full_text)
+    save_result(response)
 
 
 def save_result(response):
