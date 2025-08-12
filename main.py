@@ -1,7 +1,9 @@
+from json import load
+
 import streamlit as st
 
 from logic import submit_handler
-from utils import vectordb_helpers
+from utils.vectordb_helpers import load_knowledge_base
 
 st.title('Data Classification Assistant')
 
@@ -35,6 +37,7 @@ with tab2:
 if submitted:
     st.toast("Form submitted!")
 
+
 st.subheader("Classification Results")
 st.code(submit_handler.get_classification_result(), language=None)
 
@@ -54,4 +57,4 @@ st.subheader("Downgrade your classification")
 with st.container(border=True):
     st.write(st.session_state.get("document_text", "N/A"))
 
-vector_db = vectordb_helpers.load_knowledge_base()
+load_knowledge_base()

@@ -5,7 +5,6 @@ import streamlit as st
 from langchain_community.document_loaders import Docx2txtLoader, TextLoader
 
 from logic import query_handler
-from utils import vectordb_helpers
 
 
 def submit_text_input():
@@ -18,9 +17,8 @@ def submit_text_input():
             return
 
         # Process the input text
-        vector_db = vectordb_helpers.load_knowledge_base()
         response = query_handler.generate_rag_response(
-            st.session_state['text_input'], vector_db)
+            st.session_state['text_input'])
         print(len(response.get("source_documents")))
         save_result(response)
 

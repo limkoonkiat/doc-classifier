@@ -1,15 +1,40 @@
+from urllib import response
 import streamlit as st
-from logic.query_handler import process_user_message
+from sympy import use
 
+from logic.query_handler import generate_qna_response
 
 st.title("Q&A Bot")
+st.write("Welcome to the Q&A Bot! You can ask questions related to data classification, and I will do my best to assist you.")
 
-form = st.form(key='form')
-form.subheader("Prompt")
+default_greeting = {"role": "assistant",
+                    "content": "Hello! Do you have any questions about data classification?"}
 
-user_prompt = form.text_area("Enter your prompt here:", height=200)
+if "qna_messages" not in st.session_state:
+    st.session_state.qna_messages = [default_greeting]
 
-if form.form_submit_button("Submit"):
-    st.toast(f"User Input Submitted - {user_prompt}")
-    response = process_user_message(user_prompt)
-    st.write(response)
+for message in st.session_state.qna_messages:
+    if message["role"] == "user":
+        st.chat_message("user").write(message["content"])
+    else:
+        st.chat_message("assistant").write(message["content"])
+
+user_input = st.chat_input("Type your question here...")
+
+if user_input:
+    st.session_state.qna_messages.append(
+        {"role": "user", "content": user_input})
+    st.chat_message("user").write(user_input)
+
+    response = generate_qna_response(user_input).get(
+        "answer", "Sorry, there was an error processing your request.")
+    st.session_state.qna_messages.append(
+        {"role": "assistant", "content": response})
+    st.chat_message("assistant").write(response)
+
+
+def clear_chat():
+    st.session_state.qna_messages = [default_greeting]
+
+
+st.button("Clear Chat", on_click=clear_chat)

@@ -1,16 +1,29 @@
 import zipfile
 from io import StringIO
 
-from langchain_core.documents import Document
 import pandas as pd
 import streamlit as st
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import tiktoken
 from langchain_community.document_loaders import UnstructuredWordDocumentLoader
 from langchain_community.vectorstores import Chroma
+from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from lxml import etree
 
-from utils.llm import count_tokens
+
+def count_tokens(text):
+    # This function is for calculating the tokens given the "message"
+    # This is simplified implementation that is good enough for a rough estimation
+    encoding = tiktoken.encoding_for_model("gpt-4o-mini")
+    return len(encoding.encode(text))
+
+
+def count_tokens_from_messages(messages):
+    encoding = tiktoken.encoding_for_model("gpt-4o-mini")
+    value = ' '.join([x.get('content') for x in messages])
+    return len(encoding.encode(value))
+
 
 text_splitter = RecursiveCharacterTextSplitter(
     separators=["\n\n", "\n", " ", ""],
@@ -20,7 +33,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=True)
 def load_knowledge_base(file_path='data/Data Classification Guide.docx'):
 
     loader = UnstructuredWordDocumentLoader(
@@ -28,9 +41,6 @@ def load_knowledge_base(file_path='data/Data Classification Guide.docx'):
     documents = loader.load()
 
     documents.extend(extract_footnotes(file_path))
-
-    print("Loaded Documents:")  # Debugging line
-    print(documents)
 
     splitted_documents = text_splitter.split_documents(documents)
 
@@ -66,31 +76,19 @@ def extract_footnotes(file_path):
                 footnote_doc = Document(footnote_text)
                 footnote_doc.metadata = {
                     'source': file_path,
-                    'category_depth': 0,
                     'file_directory': 'data',
                     'filename': file_path.split('/')[-1],
-                    'filetype': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'category': 'Footnote',
-                    'element_id': footnote.get('id', '')
+                    'category': 'References',
+                    'section': 'References'
                 }
                 footnotes.append(footnote_doc)
     return footnotes
 
 
-# [Document(metadata={'source': 'data/Data Classification Guide.docx',
-# 'category_depth': 0, 'file_directory': 'data', 'filename': 'Data Classification Guide.doc
-# x', 'last_modified': '2025-08-04T16:33:53', 'page_number': 1, 'languages': ['eng'],
-# 'filetype': 'application/vnd.openxmlformats-officedocument.wordprocessingm
-# l.document', 'category': 'Title', 'element_id': '48078f80a5f7e13610c0b73985e47205'},
-# page_content='Data Classification Guide'),
-
-    print("Extracted Footnotes:")  # Debugging line
-    print(footnotes)
-    return footnotes
-
-
 def process_for_embedding(documents):
+    # TODO raptor retrievalaugmentation?
     processed_documents = []
+    current_section = ''
     for doc in documents:
         clean_metadata(doc)
         if doc.metadata.get("category") == "Table":
@@ -98,6 +96,12 @@ def process_for_embedding(documents):
             # merge the title with the table content
             table_title_doc = processed_documents.pop()
             process_table(table_title_doc, doc)
+
+        # Find and add the titles of the section we are currently in to metadata
+        elif doc.metadata.get("category") == "Title":
+            current_section = doc.page_content.strip()
+
+        doc.metadata["section"] = current_section
         processed_documents.append(doc)
 
     return processed_documents
@@ -116,16 +120,22 @@ def clean_metadata(doc):
 
 
 def process_table(table_title_doc, table_content_doc):
+    # TODO Write a summary of the table?
+
     # Extract table title from previous document
     table_title = table_title_doc.page_content
 
     # In table content document, extract text_as_html (already in html format) from metadata
     table_content = StringIO(table_content_doc.metadata.get("text_as_html"))
+    # Remove text_as_html metadata from table_content_doc
+    if "text_as_html" in table_content_doc.metadata:
+        del table_content_doc.metadata["text_as_html"]
+
     # Convert to markdown
     markdown_table = (pd.read_html(table_content, header=0)[0].to_markdown())
 
     # Merge table title and table content into page_content of table content document
-    table_content_doc.page_content = f"[{table_title} - MARKDOWN FORMAT]\n" + \
+    table_content_doc.page_content = f"[{table_title}]\n" + \
         markdown_table + "\n"
 
 
@@ -135,8 +145,10 @@ def print_documents_to_file(documents, output_file='data/documents.txt'):
     with open(output_file, 'w', encoding='utf-8') as f:
         f.truncate(0)  # Clear the file
 
-    for doc in documents:
+    for i in range(len(documents)):
+        doc = documents[i]
         with open(output_file, 'a', encoding='utf-8') as f:
-            f.write("Chunk: ")
-            f.write(str(doc))
+            f.write(f"Chunk {i+1}: \n")
+            f.write(f"Page Content: {doc.page_content}\n")
+            f.write(f"Metadata: {doc.metadata}\n")
             f.write('\n\n')
