@@ -1,0 +1,17 @@
+From: lisa.wong@abc.sg 
+To: team.leads@abc.sg 
+Subject: Monthly Service Centre Statistics - March 2024
+
+Dear Team Leads,
+
+Here's a summary of last month's service centre statistics:
+
+Total visitors: 100,345
+Average waiting time: 12 minutes
+Top 3 enquiries: Account withdrawals, surgical appointments, and Medical claims
+Customer satisfaction rating: 4.5/5
+We should discuss these numbers at next week's meeting.
+
+Best regards,
+Lisa Wong
+Service Centre Manager
