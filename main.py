@@ -1,7 +1,6 @@
-from json import load
-
 import streamlit as st
 
+from cloak_utils.cloak import cloak_it, downgrade_classification
 from logic import submit_handler
 from utils.vectordb_helpers import load_knowledge_base
 
@@ -16,7 +15,7 @@ with tab1:
         st.header("Enter your text below.")
         st.text_area("Enter your text here:", height=200, key="text_input")
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_text_input, args=(st.session_state.get('text_input'),))
+            "Submit", on_click=submit_handler.submit_text_input)
 
 with tab2:
     with st.form("file_upload_form"):
@@ -24,36 +23,49 @@ with tab2:
         file_uploader_label = "Choose a file"
         allowed_file_types = ["txt", "docx"]
 
-        uploaded_file = st.file_uploader(file_uploader_label, type=allowed_file_types, accept_multiple_files=False, key="uploaded_file", help=None,
-                                         on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible", width="stretch")
-
-        if uploaded_file is not None:
-            st.write(f"File '{uploaded_file.name}' uploaded successfully.")
+        st.file_uploader(file_uploader_label, type=allowed_file_types, accept_multiple_files=False, key="uploaded_file", help=None,
+                         on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible", width="stretch")
 
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_uploaded_file, args=(uploaded_file,))
+            "Submit", on_click=submit_handler.submit_uploaded_file)
 
-if submitted:
-    st.toast("Form submitted!")
+if st.session_state.get('submitted'):
+    st.subheader("Classification Results")
+    st.code(submit_handler.get_classification_result(), language=None)
 
+    col1, col2 = st.columns(2, border=True)
 
-st.subheader("Classification Results")
-st.code(submit_handler.get_classification_result(), language=None)
+    with col1:
+        st.subheader("Security Classification Reasoning")
+        st.code(st.session_state.get("security_classification", "N/A"),
+                language=None, wrap_lines=True)
+        st.code(st.session_state.get("security_reasoning", "N/A"),
+                language=None, wrap_lines=True)
 
-col1, col2 = st.columns(2, border=True)
+    with col2:
+        st.subheader("Sensitivity Classification Reasoning")
+        st.code(st.session_state.get("sensitivity_classification",
+                "N/A"), language=None, wrap_lines=True)
+        st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
+                language=None, wrap_lines=True)
 
-with col1:
-    st.subheader("Security Classification Reasoning")
-    st.code(st.session_state.get("security_reasoning", "N/A"),
-            language=None, wrap_lines=True)
+    last_submitted_mode = st.session_state.get('submitted_mode')
+    if last_submitted_mode == "text" or (last_submitted_mode == "file" and st.session_state.get("file_extension") == '.txt'):
+        st.subheader("Downgrade your classification")
+        with st.container(border=True):
+            st.write(st.session_state.get("document_text", ""))
 
-with col2:
-    st.subheader("Sensitivity Classification Reasoning")
-    st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
-            language=None, wrap_lines=True)
+        # st.write(downgrade_classification(
+        #     st.session_state.get("text_input", "")))
 
-st.subheader("Downgrade your classification")
-with st.container(border=True):
-    st.write(st.session_state.get("document_text", "N/A"))
+        # TODO what if text input is empty?
+        st.button("Cloak it!", key="pressed_cloak")
+
+        if st.session_state.get("pressed_cloak"):
+            st.subheader("Cloaking Results")
+            with st.container(border=True):
+                cloak_text = cloak_it(st.session_state.get("text_input", ""))
+                st.write(cloak_text)
+
 
 load_knowledge_base()

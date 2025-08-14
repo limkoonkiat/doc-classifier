@@ -1,6 +1,5 @@
 from urllib import response
 import streamlit as st
-from sympy import use
 
 from logic.query_handler import generate_qna_response
 
