@@ -7,7 +7,7 @@ from utils.access import check_password
 if not check_password():
     st.stop()
 
-    
+
 st.title("About Us")
 
 st.header("Project Scope", divider="grey")
@@ -89,26 +89,28 @@ st.write("""
 col1, col2 = st.columns(2)
 with col1:
     with st.container(border=True):
-        st.image("images/Text Input.png", caption="Text Input")
-         
+        st.image("images/text_input.png", caption="Text Input")
+
 with col2:
     with st.container(border=True):
-        st.image("images/File Input.png", caption="File Input")
-         
+        st.image("images/file_input.png", caption="File Input")
+
 st.write("""
          2. Users click submit.
          3. The assistant will return the recommended security and sensitivity classifications, along with a detailed reasoning for the classifications.
-        """) 
+        """)
 with st.container(border=True):
-    st.image("images/Classification Results.png", caption="Classification Results")    
+    st.image("images/classification_results.png",
+             caption="Classification Results")
 
 st.write("""
          4. The assistant will also return the parts of the text that are potentially causing higher security and/or sensitivity classifications in bold.
         """)
 
 with st.container(border=True):
-    st.image("images/Downgrade Your Classification.png", caption="Review the potentially damaging parts of the text")   
-         
+    st.image("images/downgrade_your_classification.png",
+             caption="Review the potentially damaging parts of the text")
+
 st.write("""         
          5. (For text input or txt files only) With a simple integration with Govtech's Cloak, users can mask specific Personally Identifiable Information in the text as one of the ways
          to lower the security and/or sensitivity classifications. 
@@ -117,7 +119,7 @@ st.write("""
          """)
 
 with st.container(border=True):
-    st.image("images/Cloak It.png", caption="Mask PIIs with Cloak")
+    st.image("images/cloak_it.png", caption="Mask PIIs with Cloak")
 
 st.subheader("2. Q&A Assistant")
 
@@ -128,7 +130,8 @@ st.write("""
          """)
 
 with st.container(border=True):
-    st.image("images/Q&A Input.png", caption="Chat session with the Q&A Assistant")
+    st.image("images/qna_input.png",
+             caption="Chat session with the Q&A Assistant")
 
 st.subheader("Future Enhancements")
 

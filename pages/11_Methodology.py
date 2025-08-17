@@ -92,8 +92,9 @@ st.write("Do refer to the provided source code for more information.")
 
 st.subheader("Data Classification Assistant Flowchart")
 
-st.image("images/Data Classification Flowchart.png", caption="Data Classification Assistant Flowchart")
+st.image("images/data_classification_flowchart.png",
+         caption="Data Classification Assistant Flowchart")
 
 st.subheader("Q&A Assistant Flowchart")
 
-st.image("images/Q&A Flowchart.png", caption="Q&A Assistant Flowchart")
+st.image("images/qna_flowchart.png", caption="Q&A Assistant Flowchart")
