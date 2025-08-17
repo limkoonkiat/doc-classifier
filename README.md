@@ -1,8 +1,8 @@
 # Document Security and Sensitivity Classifier
 
-This project is a Streamlit application designed to classify documents based on their security and sensitivity levels. 
+This project is a Streamlit application designed to classify documents based on their security and sensitivity levels.
 
-Note: This application uses a mock classification framework, do not use for real world classifications. 
+Note: This application uses a mock classification framework, do not use for real world classifications.
 
 # Getting Started
 
@@ -32,7 +32,7 @@ Note: This application uses a mock classification framework, do not use for real
    ```
 4. Run the application:
    ```bash
-   streamlit run main.py
+   streamlit run Main.py
    ```
 5. Open your web browser and navigate to `http://localhost:8501` to view the application.
 

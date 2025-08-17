@@ -1,11 +1,16 @@
 from urllib import response
 import streamlit as st
-from sympy import use
 
 from logic.query_handler import generate_qna_response
+from utils.access import check_password
 
-st.title("Q&A Bot")
-st.write("Welcome to the Q&A Bot! You can ask questions related to data classification, and I will do my best to assist you.")
+
+if not check_password():
+    st.stop()
+
+
+st.title("Q&A Assistant")
+st.write("Welcome to the Q&A Assistant! You can ask questions related to data classification, and I will do my best to assist you.")
 
 default_greeting = {"role": "assistant",
                     "content": "Hello! Do you have any questions about data classification?"}

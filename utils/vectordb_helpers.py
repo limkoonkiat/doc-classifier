@@ -21,7 +21,7 @@ def count_tokens(text):
 
 def count_tokens_from_messages(messages):
     encoding = tiktoken.encoding_for_model("gpt-4o-mini")
-    value = ' '.join([x.get('content') for x in messages])
+    value = " ".join([x.get("content") for x in messages])
     return len(encoding.encode(value))
 
 
@@ -34,10 +34,10 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 
 @st.cache_resource(show_spinner=True)
-def load_knowledge_base(file_path='data/Data Classification Guide.docx'):
+def load_knowledge_base(file_path="data/Data Classification Guide.docx"):
 
     loader = UnstructuredWordDocumentLoader(
-        file_path, mode='elements', strategy='fast')
+        file_path, mode="elements", strategy="fast")
     documents = loader.load()
 
     documents.extend(extract_footnotes(file_path))
@@ -47,7 +47,7 @@ def load_knowledge_base(file_path='data/Data Classification Guide.docx'):
     processed_documents = process_for_embedding(splitted_documents)
 
     # for testing
-    print_documents_to_file(processed_documents)
+    # print_documents_to_file(processed_documents)
 
     try:
         vector_store = Chroma.from_documents(
@@ -61,34 +61,33 @@ def load_knowledge_base(file_path='data/Data Classification Guide.docx'):
 
 
 def extract_footnotes(file_path):
-    with zipfile.ZipFile(file_path, 'r') as docx_zip:
+    with zipfile.ZipFile(file_path, "r") as docx_zip:
         if "word/footnotes.xml" not in docx_zip.namelist():
             return []
 
-        footnotes_xml = docx_zip.read('word/footnotes.xml')
+        footnotes_xml = docx_zip.read("word/footnotes.xml")
         tree = etree.fromstring(footnotes_xml)
 
         footnotes = []
 
-        for footnote in tree.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}footnote'):
-            footnote_text = ''.join(footnote.itertext()).strip()
+        for footnote in tree.findall("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}footnote"):
+            footnote_text = "".join(footnote.itertext()).strip()
             if footnote_text:
                 footnote_doc = Document(footnote_text)
                 footnote_doc.metadata = {
-                    'source': file_path,
-                    'file_directory': 'data',
-                    'filename': file_path.split('/')[-1],
-                    'category': 'References',
-                    'section': 'References'
+                    "source": file_path,
+                    "file_directory": "data",
+                    "filename": file_path.split("/")[-1],
+                    "category": "References",
+                    "section": "References"
                 }
                 footnotes.append(footnote_doc)
     return footnotes
 
 
 def process_for_embedding(documents):
-    # TODO raptor retrievalaugmentation?
     processed_documents = []
-    current_section = ''
+    current_section = ""
     for doc in documents:
         clean_metadata(doc)
         if doc.metadata.get("category") == "Table":
@@ -120,7 +119,6 @@ def clean_metadata(doc):
 
 
 def process_table(table_title_doc, table_content_doc):
-    # TODO Write a summary of the table?
 
     # Extract table title from previous document
     table_title = table_title_doc.page_content
@@ -139,16 +137,16 @@ def process_table(table_title_doc, table_content_doc):
         markdown_table + "\n"
 
 
-def print_documents_to_file(documents, output_file='data/documents.txt'):
+def print_documents_to_file(documents, output_file="data/documents.txt"):
     # This function prints the documents to a file for debugging purposes.
     # Clear and then write to output file to see chunks
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         f.truncate(0)  # Clear the file
 
     for i in range(len(documents)):
         doc = documents[i]
-        with open(output_file, 'a', encoding='utf-8') as f:
+        with open(output_file, "a", encoding="utf-8") as f:
             f.write(f"Chunk {i+1}: \n")
             f.write(f"Page Content: {doc.page_content}\n")
             f.write(f"Metadata: {doc.metadata}\n")
-            f.write('\n\n')
+            f.write("\n\n")
