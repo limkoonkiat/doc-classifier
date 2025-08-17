@@ -84,16 +84,40 @@ st.subheader("1. Data Classification Assistant")
 
 st.write("""
          Found on the Main page, this feature assists users in classifying documents based on their security and sensitivity requirements.
-         1. Users can input text, or upload simple txt and docx files for classification.
+         1. Users can input text, or upload simple txt and docx files for classification.""")
+
+col1, col2 = st.columns(2)
+with col1:
+    with st.container(border=True):
+        st.image("images/Text Input.png", caption="Text Input")
+         
+with col2:
+    with st.container(border=True):
+        st.image("images/File Input.png", caption="File Input")
+         
+st.write("""
          2. Users click submit.
          3. The assistant will return the recommended security and sensitivity classifications, along with a detailed reasoning for the classifications.
+        """) 
+with st.container(border=True):
+    st.image("images/Classification Results.png", caption="Classification Results")    
+
+st.write("""
          4. The assistant will also return the parts of the text that are potentially causing higher security and/or sensitivity classifications in bold.
+        """)
+
+with st.container(border=True):
+    st.image("images/Downgrade Your Classification.png", caption="Review the potentially damaging parts of the text")   
+         
+st.write("""         
          5. (For text input or txt files only) With a simple integration with Govtech's Cloak, users can mask specific Personally Identifiable Information in the text as one of the ways
          to lower the security and/or sensitivity classifications. 
          Note: Current implementation is limited to basic PIIs.
          Further customisations and improvements of this feature can be explored in future iterations.
          """)
 
+with st.container(border=True):
+    st.image("images/Cloak It.png", caption="Mask PIIs with Cloak")
 
 st.subheader("2. Q&A Assistant")
 
@@ -102,6 +126,9 @@ st.write("""
          1. Users can type their questions into a chat interface.
          2. The assistant will process the questions and provide relevant answers about the classification frameworks.
          """)
+
+with st.container(border=True):
+    st.image("images/Q&A Input.png", caption="Chat session with the Q&A Assistant")
 
 st.subheader("Future Enhancements")
 
