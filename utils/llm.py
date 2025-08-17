@@ -26,7 +26,7 @@ else:
 # Pass the API key to the OpenAI client
 client = OpenAI(api_key=OPENAI_KEY)
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
 
 vector_store_retriever = load_knowledge_base(
 ).as_retriever(search_kwargs={"k": 4}, temperature=0.0)
