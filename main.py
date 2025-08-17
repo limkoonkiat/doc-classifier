@@ -4,7 +4,7 @@ from cloak_utils.cloak import cloak_it
 from logic import submit_handler
 from utils.vectordb_helpers import load_knowledge_base
 
-st.title('Data Classification Assistant')
+st.title("Data Classification Assistant")
 
 st.expander("""IMPORTANT NOTICE: This web application is developed as a proof-of-concept prototype. The information provided here is NOT intended for actual usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
 
@@ -35,7 +35,7 @@ with tab2:
         submitted = st.form_submit_button(
             "Submit", on_click=submit_handler.submit_uploaded_file)
 
-if st.session_state.get('submitted'):
+if st.session_state.get("submitted"):
     st.subheader("Classification Results")
     st.code(submit_handler.get_classification_result(), language=None)
 
@@ -55,8 +55,8 @@ if st.session_state.get('submitted'):
         st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
                 language=None, wrap_lines=True)
 
-    last_submitted_mode = st.session_state.get('submitted_mode')
-    if last_submitted_mode == "text" or (last_submitted_mode == "file" and st.session_state.get("file_extension") == '.txt'):
+    last_submitted_mode = st.session_state.get("submitted_mode")
+    if last_submitted_mode == "text" or (last_submitted_mode == "file" and st.session_state.get("file_extension") == ".txt"):
         st.subheader("Downgrade your classification")
         with st.container(border=True):
             st.write(st.session_state.get("document_text", ""))

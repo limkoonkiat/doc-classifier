@@ -16,11 +16,11 @@ logging.basicConfig()
 logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
 
 
-if load_dotenv('.env'):
+if load_dotenv(".env"):
     # for local development
-    OPENAI_KEY = os.getenv('OPENAI_API_KEY')
+    OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 else:
-    OPENAI_KEY = st.secrets.get('OPENAI_API_KEY')
+    OPENAI_KEY = st.secrets.get("OPENAI_API_KEY")
 
 # Pass the API key to the OpenAI client
 client = OpenAI(api_key=OPENAI_KEY)
@@ -31,7 +31,7 @@ vector_store_retriever = load_knowledge_base(
 ).as_retriever(search_kwargs={"k": 5})
 
 
-def get_embedding(input, model='text-embedding-3-small'):
+def get_embedding(input, model="text-embedding-3-small"):
     response = client.embeddings.create(
         input=input,
         model=model

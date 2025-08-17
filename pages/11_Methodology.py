@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title('Methodology')
+st.title("Methodology")
 
 st.header("RAG LLM Core", divider="grey")
 

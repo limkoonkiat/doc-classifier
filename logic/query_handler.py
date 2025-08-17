@@ -28,9 +28,9 @@ classify_prompt = """
     </Context>
 
     Your task is to perform the following actions:
-    1. Using the Security Classification Framework(SCF) from the context, think about and provide a detailed reasoning for the security classification of the document. \
+    1. Using the Security Classification Framework (SCF) from the context, think about and provide a detailed reasoning for the security classification of the document. \
         Security classifications, from lowest to highest, are: Class Light Green, Class Dark Green, Class Blue, Class Yellow(with sub-classes NA and NB), Class Orange, Class Red, Class Black.
-    2. Using the External Sensitivity Framework(ESF) from the context, think about and provide a detailed reasoning for the sensitivity classification of the document. \
+    2. Using the External Sensitivity Framework (ESF) from the context, think about and provide a detailed reasoning for the sensitivity classification of the document. \
         Sensitivity classifications, from lowest to highest, are: S1, S2, S3. \
         Remember, only when the information can be used to identify an individual or entity(other than the company) then will it be higher than S1.
     3. Bold and return the parts of the original text that should be annoymised to have a lower security and / or sensitivity classification. If there are no parts to annoymise, return the original text.
@@ -119,9 +119,9 @@ qna_prompt = """
     Sensitivity classifications, from lowest to highest, are: S1, S2, S3.
     Do not use other classifications or frameworks outside of the SCF and ESF.
 
-    <Context >
+    <Context>
     {context}
-    </Context >
+    </Context>
 
     Your task is to answer any questions related to data classification based on the provided context and the conversation.
     Think through your answer step-by-step, with detailed reasoning for each step, before finalising your response.
@@ -133,9 +133,9 @@ def generate_qna_response(user_input):
     chat_hist = []
     for message in st.session_state.qna_messages:
         if message["role"] == "user":
-            chat_hist.append(('user', message["content"]))
+            chat_hist.append(("user", message["content"]))
         else:
-            chat_hist.append(('assistant', message["content"]))
+            chat_hist.append(("assistant", message["content"]))
     response_to_user = llm.get_qa_completion(chat_hist_retriever_prompt,
                                              qna_prompt, chat_hist, user_input)
     return response_to_user

@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
 
-st.title('About Us')
+st.title("About Us")
 
-st.header('Project Scope', divider="grey")
+st.header("Project Scope", divider="grey")
 
-st.subheader('Problem Statement')
+st.subheader("Problem Statement")
 st.write(
     """In the course of work, officers are required to classify materials according to their security and sensitivity levels.
     However, accurate classification can be challenging due to the volume of documents and the nuanced nature of their content.
@@ -14,7 +14,7 @@ st.write(
     """
 )
 
-st.subheader('Project Objective')
+st.subheader("Project Objective")
 st.write("""We propose developing an intelligent data classification tool that will:""")
 
 st.write("1. Analyse document content to recommend appropriate security and sensitivity classifications.")
@@ -23,7 +23,7 @@ st.write("2. Provide guidance on requirements and procedures for downgrading cla
 
 st.write("3. Serve as a knowledge base for general enquiries regarding security and sensitivity classification protocols.")
 
-st.header('Data Sources', divider="grey")
+st.header("Data Sources", divider="grey")
 st.write("""Due to security considerations, we used a mock data security and sensitivity classification guide to serve as the knowledge base
          in place of the actual guide, as a proof of concept for this project.
         The mock guide is based on the actual security and sensitivity classification guide but with a fictional classification system and
