@@ -1,5 +1,12 @@
 import streamlit as st
 
+from utils.access import check_password
+
+
+if not check_password():
+    st.stop()
+
+
 st.title("Methodology")
 
 st.header("RAG LLM Core", divider="grey")

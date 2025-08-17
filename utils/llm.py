@@ -3,7 +3,7 @@ import os
 
 import streamlit as st
 from dotenv import load_dotenv
-from langchain.chains import (RetrievalQA, create_history_aware_retriever,
+from langchain.chains import (create_history_aware_retriever,
                               create_retrieval_chain)
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import (ChatPromptTemplate, MessagesPlaceholder,
@@ -28,7 +28,7 @@ client = OpenAI(api_key=OPENAI_KEY)
 llm = ChatOpenAI(model="gpt-4o-mini")
 
 vector_store_retriever = load_knowledge_base(
-).as_retriever(search_kwargs={"k": 5})
+).as_retriever(search_kwargs={"k": 4}, temperature=0.0)
 
 
 def get_embedding(input, model="text-embedding-3-small"):
@@ -84,28 +84,4 @@ def get_classification_completion(retriever_system_prompt, query_system_prompt, 
     response = rag_chain.invoke({"input": user_input, "question": user_input})
     print("Response from RAG:\n")
     print(response)
-    return response
-
-
-def get_qa_completion(template, user_input):
-    qa_chain_prompt = PromptTemplate.from_template(
-        template)
-
-    # TODO Multiquery retrival???
-    # TODO reranking retrieval?
-
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=vector_store_retriever,
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": qa_chain_prompt}
-    )
-    response = qa_chain.invoke({"query": user_input})
-
-    print("Response from RAG:\n")
-    for i in range(len(response["source_documents"])):
-        doc = response["source_documents"][i]
-        print(f"Content {i+1}: {doc.page_content}")
-
     return response

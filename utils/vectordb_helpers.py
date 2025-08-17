@@ -47,7 +47,7 @@ def load_knowledge_base(file_path="data/Data Classification Guide.docx"):
     processed_documents = process_for_embedding(splitted_documents)
 
     # for testing
-    print_documents_to_file(processed_documents)
+    # print_documents_to_file(processed_documents)
 
     try:
         vector_store = Chroma.from_documents(
@@ -86,7 +86,6 @@ def extract_footnotes(file_path):
 
 
 def process_for_embedding(documents):
-    # TODO raptor retrievalaugmentation?
     processed_documents = []
     current_section = ""
     for doc in documents:
@@ -120,7 +119,6 @@ def clean_metadata(doc):
 
 
 def process_table(table_title_doc, table_content_doc):
-    # TODO Write a summary of the table?
 
     # Extract table title from previous document
     table_title = table_title_doc.page_content

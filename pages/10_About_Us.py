@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
 
+from utils.access import check_password
+
+
+if not check_password():
+    st.stop()
+
+    
 st.title("About Us")
 
 st.header("Project Scope", divider="grey")
@@ -81,8 +88,10 @@ st.write("""
          2. Users click submit.
          3. The assistant will return the recommended security and sensitivity classifications, along with a detailed reasoning for the classifications.
          4. The assistant will also return the parts of the text that are potentially causing higher security and/or sensitivity classifications in bold.
-         5. With a simple integration with Govtech's Cloak, users can then mask specific Personally Identifiable Information in the text as one of the ways
-         to lower the security and/or sensitivity classifications.
+         5. (For text input or txt files only) With a simple integration with Govtech's Cloak, users can mask specific Personally Identifiable Information in the text as one of the ways
+         to lower the security and/or sensitivity classifications. 
+         Note: Current implementation is limited to basic PIIs.
+         Further customisations and improvements of this feature can be explored in future iterations.
          """)
 
 

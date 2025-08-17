@@ -35,7 +35,7 @@ def generate_signature(http_method, path, query_params, headers, payload, privat
     # Step 1: Create the canonical request
     canonical_uri = urllib.parse.quote(path, safe="/")
     canonical_querystring = "&".join(
-        f"{urllib.parse.quote(k, safe="")}={urllib.parse.quote(v, safe="")}"
+        f"{urllib.parse.quote(k, safe='')}={urllib.parse.quote(v, safe='')}"
         for k, v in sorted(query_params.items())
     )
     signed_headers = sorted(headers.keys())
@@ -70,7 +70,7 @@ def generate_signature(http_method, path, query_params, headers, payload, privat
     string_to_sign = (
         f"{algorithm}\n"
         f"{formatted_date}\n"
-        f"{hashlib.sha256(canonical_request.encode("utf-8")).hexdigest()}"
+        f"{hashlib.sha256(canonical_request.encode('utf-8')).hexdigest()}"
     )
     # Step 3: Calculate the signing key
 

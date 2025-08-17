@@ -2,6 +2,12 @@ from urllib import response
 import streamlit as st
 
 from logic.query_handler import generate_qna_response
+from utils.access import check_password
+
+
+if not check_password():
+    st.stop()
+
 
 st.title("Q&A Assistant")
 st.write("Welcome to the Q&A Assistant! You can ask questions related to data classification, and I will do my best to assist you.")

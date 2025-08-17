@@ -1,9 +1,8 @@
 import json
 import os
 import tempfile
-import pypdf
 import streamlit as st
-from langchain_community.document_loaders import Docx2txtLoader, TextLoader
+from langchain_community.document_loaders import Docx2txtLoader
 
 from logic import query_handler
 
@@ -18,6 +17,7 @@ def submit_text_input():
     save_result(response)
     st.session_state["submitted"] = True
     st.session_state["submitted_mode"] = "text"
+    st.session_state["saved_text_input"] = st.session_state["text_input"]
 
 
 def submit_uploaded_file():
@@ -43,7 +43,7 @@ def submit_uploaded_file():
         if file_extension == ".txt":
             with open(temp_path, "r", encoding="UTF-8") as f:
                 full_text = f.read()
-            st.session_state["text_input"] = full_text
+            st.session_state["saved_text_input"] = full_text
         elif file_extension == ".docx":
             loader = Docx2txtLoader(temp_path)
         elif file_extension == ".pdf":
@@ -80,8 +80,8 @@ def save_result(response):
         "security_reasoning", "")
     st.session_state["sensitivity_reasoning"] = json_output.get(
         "sensitivity_reasoning", "")
-    st.session_state["document_text"] = json_output.get(
-        "document_text", "")
+    st.session_state["document_text"] = clean_text_for_markdown(json_output.get(
+        "document_text", ""))
 
 
 def extract_curly_only(text):
@@ -91,6 +91,11 @@ def extract_curly_only(text):
         return text[start:end + 1]
     else:
         return text
+
+
+def clean_text_for_markdown(text):
+    text = text.replace("$", "\\$")
+    return text
 
 
 def get_classification_result():
