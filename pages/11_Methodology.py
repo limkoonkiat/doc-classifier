@@ -37,7 +37,7 @@ st.write("""UnstructuredWordDocumentLoader returns tables as both plain text and
          we converted the multiple tables from the original document into markdown before storage. We also merged the titles of the tables with the tables into one chunk, 
          to potentially improve the ability of the retriever to find the relevant tables. """)
 
-st.write("**Augmentation 3:Include Section in Metadata**")
+st.write("**Augmentation 3: Include Section in Metadata**")
 st.write("""To further improve the understanding of the chunks, we appended the section of the original document the chunk is from to their metadata. For example, if a chunk is from the Security 
          Classification Framework (SCF) section of the original document, it might be useful in answering queries about SCF. Thus, we append "section": "SCF Framework" into the chunk's metadata.""")
 
