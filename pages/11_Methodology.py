@@ -27,15 +27,15 @@ st.subheader("2. Splitting and Chunking")
 st.write("""RecursiveCharacterTextSplitter is used to split the documents, 
          Additionally, before storing the chunks, we made a few augmentations to the chunks to potentially improve the retrieval process and the quality of the retrieved information.""")
 
-st.write("**Augmentation 1: Convert Tables to Markdown**")
-st.write("""UnstructuredWordDocumentLoader returns tables as both plain text and one long html string. In an effort to preserve the table structure for better LLM understanding and embedding, 
-         we converted the multiple tables from the original document into markdown before storage. We also merged the titles of the tables with the tables into one chunk, 
-         to potentially improve the ability of the retriever to find the relevant tables. """)
-
-st.write("**Augmentation 2: Append Missing References**")
+st.write("**Augmentation 1: Append Missing References**")
 st.write("""UnstructuredWordDocumentLoader does not load the multiple references in the footnotes of the original document. Many of these references contain important guidance on how to classify 
          data. Thus, we separately extracted the references from the document and appended it to the back of the rest of the extracted chunks. A potential improvement for the future will be to 
          embed the exact locations in the document the references are from, to preserve the relevant context of the references.""")
+
+st.write("**Augmentation 2: Convert Tables to Markdown**")
+st.write("""UnstructuredWordDocumentLoader returns tables as both plain text and one long html string. In an effort to preserve the table structure for better LLM understanding and embedding, 
+         we converted the multiple tables from the original document into markdown before storage. We also merged the titles of the tables with the tables into one chunk, 
+         to potentially improve the ability of the retriever to find the relevant tables. """)
 
 st.write("**Augmentation 3:Include Section in Metadata**")
 st.write("""To further improve the understanding of the chunks, we appended the section of the original document the chunk is from to their metadata. For example, if a chunk is from the Security 
@@ -92,4 +92,8 @@ st.write("Do refer to the provided source code for more information.")
 
 st.subheader("Data Classification Assistant Flowchart")
 
+st.image("data/Data Classification Flowchart.png", caption="Data Classification Assistant Flowchart")
+
 st.subheader("Q&A Assistant Flowchart")
+
+st.image("data/Q&A Flowchart.png", caption="Q&A Assistant Flowchart")
