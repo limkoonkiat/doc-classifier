@@ -5,6 +5,10 @@ from logic import submit_handler
 from utils.access import check_password
 from utils.vectordb_helpers import load_knowledge_base
 
+# Pysqlite3 required for Streamlit Cloud, comment out if not working on local
+__import__("pysqlite3")
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+
 
 if not check_password():
     st.stop()
