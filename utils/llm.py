@@ -11,9 +11,10 @@ from langchain.prompts import (ChatPromptTemplate, MessagesPlaceholder,
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
-import logging
-logging.basicConfig()
-logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
+# import logging
+
+# logging.basicConfig()
+# logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
 
 
 if load_dotenv(".env"):

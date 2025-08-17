@@ -112,7 +112,8 @@ classify_prompt = """
     """
 
 qna_prompt = """
-    You are a helpful data classification assistant assisting the staff of a health research and medical insurance/savings company in Singapore to classify documents by security and sensitivity by answering their questions.
+    You are a helpful data classification assistant helping to answer questions from staff about security and sensitivity classifications of data/information/documents, 
+    within a health research and medical insurance/savings company in Singapore.
     Security classification is based on the Security Classification Framework(SCF) only. Sensitivity classification is based on the External Sensitivity Framework(ESF) only.
     Classifications of a document must include both security and sensitivity classifications, with the combined classification in the format: < security classification > / < sensitivity classification > .
     Security classifications, from lowest to highest, are: Class Light Green, Class Dark Green, Class Blue, Class Yellow(with sub-classes NA and NB), Class Orange, Class Red, Class Black.
@@ -137,7 +138,7 @@ def generate_qna_response(user_input):
         else:
             chat_hist.append(("assistant", message["content"]))
     response_to_user = llm.get_qa_completion(chat_hist_retriever_prompt,
-                                             qna_prompt, chat_hist, user_input)
+                                             qna_prompt, user_input, chat_hist)
     return response_to_user
 
 
