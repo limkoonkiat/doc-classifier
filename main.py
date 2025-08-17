@@ -1,10 +1,16 @@
 import streamlit as st
 
-from cloak_utils.cloak import cloak_it, downgrade_classification
+from cloak_utils.cloak import cloak_it
 from logic import submit_handler
 from utils.vectordb_helpers import load_knowledge_base
 
 st.title('Data Classification Assistant')
+
+st.expander("""IMPORTANT NOTICE: This web application is developed as a proof-of-concept prototype. The information provided here is NOT intended for actual usage and should not be relied upon for making any decisions, especially those related to financial, legal, or healthcare matters.
+
+Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
+
+Always consult with qualified professionals for accurate and personalized advice.""")
 
 st.subheader("Enter your text or upload a file for classification")
 
