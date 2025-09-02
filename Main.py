@@ -1,14 +1,16 @@
-# Pysqlite3 required for Streamlit Cloud, comment out if not working on local
-from venv import create
+import streamlit as st
+
+from cloak.cloak_utils import display_cloak_section
+from logic.submit_handler import (get_classification_result, submit_text_input,
+                                  submit_uploaded_file)
+from utils.access import check_password
 from utils.ui_helpers import create_custom_divider, set_stcode_style
 from utils.vectordb_helpers import load_knowledge_base
-from utils.access import check_password
-from logic import submit_handler
-from cloak_utils.cloak import cloak_it
-import streamlit as st
-import sys
-__import__('pysqlite3')
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+# Pysqlite3 required for Streamlit Cloud, comment out if not working on local
+# import sys
+# __import__('pysqlite3')
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 
 if not check_password():
@@ -30,16 +32,16 @@ tab1, tab2 = st.tabs(["Text Input", "File Upload"])
 with tab1:
 
     with st.form("text_input_form"):
-        st.header("Enter your text below.")
+        st.subheader("Enter your text")
         if "saved_text_input" in st.session_state:
             st.session_state["text_input"] = st.session_state["saved_text_input"]
-        st.text_area("Enter your text here:", height=200, key="text_input")
+        st.text_area("", height=200, key="text_input")
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_text_input)
+            "Submit", on_click=submit_text_input)
 
 with tab2:
     with st.form("file_upload_form"):
-        st.header("Upload your file below.")
+        st.subheader("Upload your file")
         file_uploader_label = "Choose a file"
         allowed_file_types = ["txt", "docx"]
 
@@ -47,12 +49,13 @@ with tab2:
                          on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible", width="stretch")
 
         submitted = st.form_submit_button(
-            "Submit", on_click=submit_handler.submit_uploaded_file)
+            "Submit", on_click=submit_uploaded_file)
 
 if st.session_state.get("submitted"):
+    st.divider()
     st.subheader("Classification Results")
     create_custom_divider("both")
-    st.code(submit_handler.get_classification_result(), language=None)
+    st.code(get_classification_result(), language=None)
 
     col1, col2 = st.columns(2, border=True)
 
@@ -74,21 +77,14 @@ if st.session_state.get("submitted"):
 
     last_submitted_mode = st.session_state.get("submitted_mode")
     if last_submitted_mode == "text" or (last_submitted_mode == "file" and st.session_state.get("file_extension") == ".txt"):
+        st.divider()
         st.subheader("Downgrade your classification")
         st.write("Potentially damaging parts of the text are highlighted in bold.")
         with st.container(border=True):
             st.markdown(st.session_state.get(
                 "document_text", ""), unsafe_allow_html=True)
 
-        st.subheader("Cloak It!")
-        st.write("You can use Govtech's Cloak to mask specific Personally Identifiable Information (PII) in the text to potentially lower the security and/or sensitivity classifications.")
-        st.button("Cloak my text!", key="pressed_cloak")
-
-        with st.container():
-            if st.session_state.get("pressed_cloak"):
-                with st.container(border=True):
-                    cloak_text = cloak_it(
-                        st.session_state.get("text_input", ""))
-                    st.write(submit_handler.clean_text_for_markdown(cloak_text))
+    st.divider()
+    display_cloak_section()
 
 load_knowledge_base()

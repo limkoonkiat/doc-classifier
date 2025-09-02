@@ -15,9 +15,6 @@ def get_color(classification):
         "S2": "SlateGray",
         "S3": "DarkSlateGray"
     }
-    print("get color")
-    print(colors.get(classification, "none"))
-    return colors.get(classification, "none")
 
 
 def set_stcode_style():
