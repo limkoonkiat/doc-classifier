@@ -23,10 +23,9 @@ def set_stcode_style():
         """
     <style>
     pre, code, .stCode, .stMarkdown pre {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        font-family: "Source Sans Pro", system-ui, -apple-system, BlinkMacSystemFont,
                      "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
                      "Helvetica Neue", sans-serif !important;
-        font-size: 0.875rem
     }
     </style>
     """,
