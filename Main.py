@@ -1,19 +1,20 @@
 # Pysqlite3 required for Streamlit Cloud, comment out if not working on local
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
-import streamlit as st
-
-from cloak_utils.cloak import cloak_it
-from logic import submit_handler
-from utils.access import check_password
+from venv import create
+from utils.ui_helpers import create_custom_divider, set_stcode_style
 from utils.vectordb_helpers import load_knowledge_base
+from utils.access import check_password
+from logic import submit_handler
+from cloak_utils.cloak import cloak_it
+import streamlit as st
+import sys
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 
 if not check_password():
     st.stop()
 
+set_stcode_style()
 
 st.title("Data Classification Assistant")
 
@@ -50,12 +51,14 @@ with tab2:
 
 if st.session_state.get("submitted"):
     st.subheader("Classification Results")
+    create_custom_divider("both")
     st.code(submit_handler.get_classification_result(), language=None)
 
     col1, col2 = st.columns(2, border=True)
 
     with col1:
         st.subheader("Security Classification Reasoning")
+        create_custom_divider("security")
         st.code(st.session_state.get("security_classification", "N/A"),
                 language=None, wrap_lines=True)
         st.code(st.session_state.get("security_reasoning", "N/A"),
@@ -63,6 +66,7 @@ if st.session_state.get("submitted"):
 
     with col2:
         st.subheader("Sensitivity Classification Reasoning")
+        create_custom_divider("sensitivity")
         st.code(st.session_state.get("sensitivity_classification",
                 "N/A"), language=None, wrap_lines=True)
         st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
@@ -73,7 +77,8 @@ if st.session_state.get("submitted"):
         st.subheader("Downgrade your classification")
         st.write("Potentially damaging parts of the text are highlighted in bold.")
         with st.container(border=True):
-            st.markdown(st.session_state.get("document_text", ""), unsafe_allow_html=True)
+            st.markdown(st.session_state.get(
+                "document_text", ""), unsafe_allow_html=True)
 
         st.subheader("Cloak It!")
         st.write("You can use Govtech's Cloak to mask specific Personally Identifiable Information (PII) in the text to potentially lower the security and/or sensitivity classifications.")
@@ -82,7 +87,8 @@ if st.session_state.get("submitted"):
         with st.container():
             if st.session_state.get("pressed_cloak"):
                 with st.container(border=True):
-                    cloak_text = cloak_it(st.session_state.get("text_input", ""))
+                    cloak_text = cloak_it(
+                        st.session_state.get("text_input", ""))
                     st.write(submit_handler.clean_text_for_markdown(cloak_text))
 
 load_knowledge_base()
