@@ -163,52 +163,8 @@ def cloak_analyse(text):
 def cloak_transform(text):
     # FTA Transform Endpoint
     url = f"{base_url}/transform"
-    payload = {
-        "text": text,
-        "language": "en",
-        "entities": [
-            "PERSON",
-            "SG_NRIC_FIN",
-            "SG_BANK_ACCOUNT_NUMBER",
-            "SG_ADDRESS",
-            "PHONE_NUMBER",
-            "EMAIL_ADDRESS"
-        ],
-        "analyze_parameters": {
-            "nric": {
-                "checksum": False
-            }
-        },
-        "score_threshold": 0.5,
-        "anonymizers": {
-            "SG_NRIC_FIN": {
-                "type": "replace",
-                "new_value": "<SG_NRIC_FIN>"
-            },
-            "PHONE_NUMBER": {
-                "type": "mask",
-                "masking_char": "*",
-                "chars_to_mask": 4,
-                "from_end": False
-            },
-            "PERSON": {
-                "type": "replace",
-                "new_value": "<PERSON>"
-            },
-            "EMAIL_ADDRESS": {
-                "type": "replace",
-                "new_value": " <EMAIL_ADDRESS>"
-            },
-            "SG_ADDRESS": {
-                "type": "replace",
-                "new_value": "<SG_ADDRESS>"
-            },
-            "SG_BANK_ACCOUNT_NUMBER": {
-                "type": "replace",
-                "new_value": "<SG_BANK_ACCOUNT_NUMBER>"
-            }
-        }
-    }
+    payload = form_transform_payload(text)
+
     #####################
     http_method = "POST"
     service = "fta"
@@ -227,3 +183,67 @@ def cloak_transform(text):
     # pprint(response.json())
     transform_results = response.json()
     return transform_results
+
+
+entity_parameter_mapping = {
+    "Name": "PERSON",
+    "NRIC": "SG_NRIC_FIN",
+    "Email Address": "EMAIL_ADDRESS",
+    "Phone Number": "PHONE_NUMBER",
+    "Nationality/Race/Religion": "NRP",
+    "Full Address": "SG_ADDRESS",
+    "Street": "SG_ADDRESS_STREET",
+    "Postal Code": "SG_ADDRESS_POSTAL_CODE",
+    "Unit Number": "SG_ADDRESS_UNIT_NUMBER",
+    "Country": "LOCATION",
+    "Currency": "CURRENCY",
+    "Credit Card": "CREDIT_CARD",
+    "SG Bank Account Number": "SG_BANK_ACCOUNT_NUMBER",
+    "Intl. Bank Account Number": "IBAN_CODE",
+    "IP Address": "IP_ADDRESS",
+    "URL": "URL",
+    "Date and Time": "DATE_TIME",
+    "UEN": "SG_UEN"
+}
+
+
+def form_transform_payload(text, score_threshold=0.5):
+
+    entities = []
+    anonymizers = {}
+    for name in entity_parameter_mapping.keys():
+        if st.session_state.get(f"toggle_{name.lower()}", True):
+            entities.append(entity_parameter_mapping[name])
+
+            technique = st.session_state.get(
+                f"technique_{name.lower()}").lower()
+            anonymizers[entity_parameter_mapping[name]] = {
+                "type": technique
+            }
+            if technique == "replace":
+                anonymizers[entity_parameter_mapping[name]]["new_value"] = st.session_state.get(
+                    f"replace_text_{name.lower()}", f"<{name}>")
+            elif technique == "mask":
+                anonymizers[entity_parameter_mapping[name]]["masking_char"] = st.session_state.get(
+                    f"mask_char_{name.lower()}", "*")
+                anonymizers[entity_parameter_mapping[name]]["chars_to_mask"] = st.session_state.get(
+                    f"mask_length_{name.lower()}", 1)
+                anonymizers[entity_parameter_mapping[name]]["from_end"] = not st.session_state.get(
+                    f"mask_prefix_{name.lower()}", False)
+            elif technique == "alias" or technique == "redact":
+                pass
+
+    payload = {
+        "text": text,
+        "language": "en",
+        "entities": entities,
+        "analyze_parameters": {
+            "nric": {
+                "checksum": False
+            }
+        },
+        "score_threshold": score_threshold,
+        "anonymizers": anonymizers
+    }
+
+    return payload
