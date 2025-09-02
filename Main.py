@@ -8,9 +8,9 @@ from utils.ui_helpers import create_custom_divider, set_stcode_style
 from utils.vectordb_helpers import load_knowledge_base
 
 # Pysqlite3 required for Streamlit Cloud, comment out if not working on local
-# import sys
-# __import__('pysqlite3')
-# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import sys
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 
 if not check_password():
