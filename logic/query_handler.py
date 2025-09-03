@@ -5,8 +5,8 @@ from utils import llm
 classify_retriever_prompt = """
     You are an AI language model assistant helping with retrieving information about how to classify an original text by security and sensitivity.
     Classifications of a document must include both security and sensitivity classifications, with the combined classification in the format: < security classification > / < sensitivity classification > .
-    Your task is to read the original text, and generate up to 4 different questions that have to be answered to give both a security and sensitivity classification. These questions should help retrieve relevant documents from a vector
-    database to classify the original text. By generating multiple perspectives on the original text, your goal is to help
+    Your task is to read the original text, and generate up to 5 different queries to retrieve relevant documents from a vector database to be able to give both a security and sensitivity classification to the original text.
+    By generating multiple perspectives on the original text, your goal is to help
     the user overcome some of the limitations of the distance-based similarity search.
     Provide these questions separated by newlines.
     Original text: {question}
