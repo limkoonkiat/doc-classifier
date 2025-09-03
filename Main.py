@@ -4,7 +4,7 @@ from cloak.cloak_utils import display_cloak_section
 from logic.submit_handler import (get_classification_result, submit_text_input,
                                   submit_uploaded_file)
 from utils.access import check_password
-from utils.ui_helpers import create_custom_divider, set_stcode_style
+from utils.ui_helpers import create_custom_divider, set_stcode_style, show_classifications
 from utils.vectordb_helpers import load_knowledge_base
 
 # Pysqlite3 required for Streamlit Cloud, comment out if not working on local
@@ -54,6 +54,8 @@ with tab2:
 if st.session_state.get("submitted"):
     st.divider()
     st.subheader("Classification Results")
+    with st.popover("Classifications"):
+        show_classifications()
     create_custom_divider("both")
     st.code(get_classification_result(), language=None)
 
