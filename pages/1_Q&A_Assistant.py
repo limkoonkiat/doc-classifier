@@ -5,8 +5,8 @@ from logic.query_handler import generate_qna_response
 from utils.access import check_password
 
 
-if not check_password():
-    st.stop()
+# if not check_password():
+#     st.stop()
 
 
 st.title("Q&A Assistant")

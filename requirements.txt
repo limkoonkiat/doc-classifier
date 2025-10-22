@@ -63,6 +63,7 @@ langchain-community==0.3.27
 langchain-core==0.3.72
 langchain-experimental==0.3.4
 langchain-openai==0.3.28
+langchain-ollama==0.3.3
 langchain-text-splitters==0.3.8
 langdetect==1.0.9
 langsmith==0.4.8
@@ -77,7 +78,7 @@ multidict==6.6.3
 mypy_extensions==1.1.0
 narwhals==1.47.1
 nest-asyncio==1.6.0
-nltk==3.9.1
+nltk==3.8.1
 numpy==2.3.1
 oauthlib==3.3.1
 olefile==0.47
@@ -112,7 +113,7 @@ pypdf==5.9.0
 PyPika==0.48.9
 pyproject_hooks==1.2.0
 pyreadline3==3.5.4
-pysqlite3-binary
+# pysqlite3-binary==0.4.7.post8
 python-dateutil==2.9.0.post0
 python-docx==1.2.0
 python-dotenv==1.1.1
@@ -141,9 +142,10 @@ sympy==1.14.0
 tabulate==0.9.0
 tenacity==9.1.2
 tiktoken==0.9.0
-tokenizers==0.21.4
+tokenizers==0.22.1
 toml==0.10.2
 tornado==6.5.1
+transformers==4.57.1
 tqdm==4.67.1
 typer==0.16.0
 typing-inspect==0.9.0

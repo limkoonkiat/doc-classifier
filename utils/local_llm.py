@@ -1,4 +1,4 @@
-from utils.vectordb_helpers import load_knowledge_base
+from utils.local_vectordb_helpers import local_load_knowledge_base
 import os
 
 import streamlit as st
@@ -9,35 +9,28 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import (ChatPromptTemplate, MessagesPlaceholder,
                                PromptTemplate)
 from langchain.retrievers.multi_query import MultiQueryRetriever
-from langchain_openai import ChatOpenAI
-from openai import OpenAI
+from langchain_ollama.llms import OllamaLLM
 # import logging
 
 # logging.basicConfig()
 # logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
 
 
-# if load_dotenv(".env"):
-#     # for local development
-#     OPENAI_KEY = os.getenv("OPENAI_API_KEY")
-# else:
-#     OPENAI_KEY = st.secrets.get("OPENAI_API_KEY")
+load_dotenv()
 
-# Pass the API key to the OpenAI client
-client = OpenAI(api_key=OPENAI_KEY)
 
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.0)
+llm_model = OllamaLLM(model=os.getenv("LLM_MODEL"))
 
-vector_store_retriever = load_knowledge_base(
+vector_store_retriever = local_load_knowledge_base(
 ).as_retriever(search_kwargs={"k": 4}, temperature=0.0)
 
 
-def get_embedding(input, model="text-embedding-3-small"):
-    response = client.embeddings.create(
-        input=input,
-        model=model
-    )
-    return [x.embedding for x in response.data]
+# def get_embedding(input, model="text-embedding-3-small"):
+#     response = client.embeddings.create(
+#         input=input,
+#         model=model
+#     )
+#     return [x.embedding for x in response.data]
 
 
 def get_qa_completion(retriever_system_prompt, query_system_prompt, user_input, chat_hist):
@@ -52,7 +45,7 @@ def get_qa_completion(retriever_system_prompt, query_system_prompt, user_input, 
     )
 
     history_aware_retriever = create_history_aware_retriever(
-        llm, vector_store_retriever, contextualize_q_prompt
+        llm_model, vector_store_retriever, contextualize_q_prompt
     )
 
     qa_prompt = ChatPromptTemplate.from_messages(
@@ -63,7 +56,7 @@ def get_qa_completion(retriever_system_prompt, query_system_prompt, user_input, 
         ]
     )
 
-    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+    question_answer_chain = create_stuff_documents_chain(llm_model, qa_prompt)
     rag_chain = create_retrieval_chain(
         history_aware_retriever, question_answer_chain)
     response = rag_chain.invoke({"input": user_input, "chat_hist": chat_hist})
@@ -74,12 +67,12 @@ def get_classification_completion(retriever_system_prompt, query_system_prompt, 
     multiquery_q_prompt = PromptTemplate.from_template(retriever_system_prompt)
 
     multiquery_retriever = MultiQueryRetriever.from_llm(
-        vector_store_retriever, llm, multiquery_q_prompt)
+        vector_store_retriever, llm_model, multiquery_q_prompt)
 
     classify_prompt = PromptTemplate.from_template(query_system_prompt)
 
     classify_chain = create_stuff_documents_chain(
-        llm, classify_prompt)
+        llm_model, classify_prompt)
     rag_chain = create_retrieval_chain(
         multiquery_retriever, classify_chain)
     response = rag_chain.invoke({"input": user_input, "question": user_input})

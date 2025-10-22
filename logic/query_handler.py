@@ -1,6 +1,16 @@
 import streamlit as st
 
-from utils import llm
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+if os.getenv("LOCAL") =="1" :
+    is_local = True
+    from utils import local_llm
+else:
+    is_local = False
+    from utils import llm
 
 classify_retriever_prompt = """
     You are an AI language model assistant helping with retrieving information about how to classify an original text by security and sensitivity.
@@ -14,7 +24,7 @@ classify_retriever_prompt = """
 
 chat_hist_retriever_prompt = """
     You are a AI language model assistant helping to retrieve relevant documents about data classification from a vector database.
-    Given a chat history and the latest user question which might reference context in the chat history, \
+    Given a chat history and the latest user question which might reference context in the chat history, 
     formulate a standalone question which can be understood without the chat history.
     The reformulated question must be useful enough to retrieve relevant context from the vector database.
     Do NOT answer the question, just reformulate it if needed and otherwise return it as is."""
@@ -28,13 +38,14 @@ classify_prompt = """
     </Context>
 
     Your task is to perform the following actions:
-    1. Using the Security Classification Framework (SCF) from the context, think about and provide a detailed reasoning for the security classification of the document. \
+    1. Using the Security Classification Framework (SCF) from the context, think about and provide a detailed reasoning for the security classification of the document. 
         Security classifications, from lowest to highest, are: Class Light Green, Class Dark Green, Class Blue, Class Yellow(with sub-classes NA and NB), Class Orange, Class Red, Class Black.
-    2. Using the External Sensitivity Framework (ESF) from the context, think about and provide a detailed reasoning for the sensitivity classification of the document. \
-        Sensitivity classifications, from lowest to highest, are: S1, S2, S3. \
-        Remember, only when the information can be used to identify an individual or entity(other than the company) then will it be higher than S1.
+    2. Using the External Sensitivity Framework (ESF) from the context, think about and provide a detailed reasoning for the sensitivity classification of the document. 
+        Sensitivity classifications, from lowest to highest, are: S1, S2, S3. 
+        Remember, only when the information can be used to identify an individual or entity(other than the company) then will it be higher than S1. 
     3. Bold and return the parts of the original text that should be annoymised to have a lower security and / or sensitivity classification. If there are no parts to annoymise, return the original text.
-
+    4. The final result will take the highest security and sensitivity classifications, not based on average or majority of the document. 
+    
     Think through your tasks step-by-step and provide a detailed reasoning for both security and sensitivity classifications.
     Do not use other classifications or frameworks outside of the SCF and ESF.
     If you don't know the answer, say you don't know. Do not try to make up an answer.
@@ -137,10 +148,19 @@ def generate_qna_response(user_input):
             chat_hist.append(("user", message["content"]))
         else:
             chat_hist.append(("assistant", message["content"]))
-    response_to_user = llm.get_qa_completion(chat_hist_retriever_prompt,
+
+    if is_local :
+        response_to_user = local_llm.get_qa_completion(chat_hist_retriever_prompt,
+                                             qna_prompt, user_input, chat_hist)
+    else:
+        response_to_user = llm.get_qa_completion(chat_hist_retriever_prompt,
                                              qna_prompt, user_input, chat_hist)
     return response_to_user
 
 
 def generate_rag_response(user_input):
-    return llm.get_classification_completion(classify_retriever_prompt, classify_prompt, user_input)
+    if is_local :
+        return local_llm.get_classification_completion(classify_retriever_prompt, classify_prompt, user_input)
+    else:
+        return llm.get_classification_completion(classify_retriever_prompt, classify_prompt, user_input)
+    

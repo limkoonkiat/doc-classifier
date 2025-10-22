@@ -1,20 +1,30 @@
 # Pysqlite3 required for Streamlit Cloud, comment out if not working on local
 import sys
-__import__('pysqlite3')
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# __import__('pysqlite3')
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import streamlit as st
-
-from cloak.cloak_utils import display_cloak_section
+import os
+# from cloak.cloak_utils import display_cloak_section
 from logic.submit_handler import (get_classification_result, submit_text_input,
                                   submit_uploaded_file)
 from utils.access import check_password
 from utils.ui_helpers import create_custom_divider, set_stcode_style, show_classifications
-from utils.vectordb_helpers import load_knowledge_base
+from dotenv import load_dotenv
 
+# if not check_password():
+#     st.stop()
 
-if not check_password():
-    st.stop()
+load_dotenv()
+
+if os.getenv("LOCAL") =="1" :
+    is_local = True
+    from utils.local_vectordb_helpers import local_load_knowledge_base
+else:
+    is_local = False
+    from utils.vectordb_helpers import load_knowledge_base
+
+print(f"Running in local mode: {is_local}")
 
 set_stcode_style()
 
@@ -87,6 +97,12 @@ if st.session_state.get("submitted"):
                 "document_text", ""), unsafe_allow_html=True)
 
     st.divider()
-    display_cloak_section()
+    # display_cloak_section()
 
-load_knowledge_base()
+
+
+if is_local :
+    local_load_knowledge_base()
+else:
+    load_knowledge_base()
+    

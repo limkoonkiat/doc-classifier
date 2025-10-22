@@ -3,8 +3,8 @@ import streamlit as st
 from utils.access import check_password
 
 
-if not check_password():
-    st.stop()
+# if not check_password():
+#     st.stop()
 
 
 st.title("Sample Inputs")
