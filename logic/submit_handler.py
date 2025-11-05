@@ -71,14 +71,13 @@ def submit_uploaded_file():
 
 def save_result(response):
     json_string = extract_curly_only(response["answer"])
-    print("json_string:"+json_string)
     json_output = json.loads(json_string)
     st.session_state["security_classification"] = json_output.get(
         "security_classification", "")
     st.session_state["sensitivity_classification"] = json_output.get(
         "sensitivity_classification", "")
     st.session_state["security_reasoning"] = json_output.get(
-        "security_reasoning", "")ade
+        "security_reasoning", "")
     st.session_state["sensitivity_reasoning"] = json_output.get(
         "sensitivity_reasoning", "")
     st.session_state["document_text"] = clean_text_for_markdown(json_output.get(
