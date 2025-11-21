@@ -10,27 +10,21 @@ from langchain.prompts import (ChatPromptTemplate, MessagesPlaceholder,
                                PromptTemplate)
 from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain_ollama.llms import OllamaLLM
-# import logging
+import logging
 
-# logging.basicConfig()
-# logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
+# Set up logging to show in terminal
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.DEBUG)
+logging.getLogger("langchain.chains").setLevel(logging.DEBUG)
+logging.getLogger("langchain_ollama").setLevel(logging.DEBUG)
+
+load_dotenv(override=True)
 
 
-load_dotenv()
-
-
-llm_model = OllamaLLM(model=os.getenv("LLM_MODEL"))
+llm_model = OllamaLLM(model=os.getenv("LLM_MODEL"), base_url="http://localhost:11434", temperature=0.0)
 
 vector_store_retriever = local_load_knowledge_base(
-).as_retriever(search_kwargs={"k": 4}, temperature=0.0)
-
-
-# def get_embedding(input, model="text-embedding-3-small"):
-#     response = client.embeddings.create(
-#         input=input,
-#         model=model
-#     )
-#     return [x.embedding for x in response.data]
+).as_retriever(search_kwargs={"k": 3}, temperature=0.0)
 
 
 def get_qa_completion(retriever_system_prompt, query_system_prompt, user_input, chat_hist):

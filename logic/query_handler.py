@@ -15,10 +15,10 @@ else:
 classify_retriever_prompt = """
     You are an AI language model assistant helping with retrieving information about how to classify an original text by security and sensitivity.
     Classifications of a document must include both security and sensitivity classifications, with the combined classification in the format: < security classification > / < sensitivity classification > .
-    Your task is to read the original text, and generate up to 5 different queries to retrieve relevant documents from a vector database to be able to give both a security and sensitivity classification to the original text.
+    Your task is to read the original text, and generate different simple and general queries to retrieve relevant documents from a vector database to be able to give both a security and sensitivity classification to the original text.
     By generating multiple perspectives on the original text, your goal is to help
     the user overcome some of the limitations of the distance-based similarity search.
-    Provide these questions separated by newlines.
+    Provide these questions separated by newlines. Combine related questions into one where possible. Your questions should be clear, useful and not too specific for retrieving relevant context.
     Original text: {question}
 """
 
@@ -50,13 +50,17 @@ classify_prompt = """
     Do not use other classifications or frameworks outside of the SCF and ESF.
     If you don't know the answer, say you don't know. Do not try to make up an answer.
     
-    Your response must be in valid json format only, containing the following information:
-        security_classification: < Your security classification here > ,
-        sensitivity_classification: < Your sensitivity classification here > ,
-        security_reasoning: < Your reasoning for your security classification here > ,
-        sensitivity_reasoning: < Your reasoning for your sensitivity classification here >
-        document_text: < The text of the document with the parts that can be annoymised to have a lower security and sensitivity classification in **bold**, or the original text if none. 
+    Your response must be in, and only in, valid JSON format, containing the following information:
+    {{
+        "security_classification": "< Your security classification here >",
+        "sensitivity_classification": "< Your sensitivity classification here >",
+        "security_reasoning": "< Your reasoning for your security classification here >",
+        "sensitivity_reasoning": "< Your reasoning for your sensitivity classification here >",
+        "document_text": "< The cleaned document text with parts to be annoymised bolded here >"
+    }}
 
+    Do not include any other text outside of the JSON format.
+    
     Review the inputs and outputs, delimited by example tags, for extra examples.
     <Examples>
     Original Text: This is a confidential document containing personal information about John Doe, who lives at 123 Main Street, Singapore.

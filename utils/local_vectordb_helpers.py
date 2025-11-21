@@ -44,7 +44,7 @@ def local_load_knowledge_base(file_path=file):
     try:
         vector_store = Chroma.from_documents(
             documents=processed_documents,
-            embedding=OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL")),
+            embedding=OllamaEmbeddings(model=os.getenv("EMBEDDING_MODEL"), temperature=0.0),
         )
         return vector_store
     

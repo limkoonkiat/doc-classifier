@@ -7,13 +7,9 @@ import streamlit as st
 import os
 # from cloak.cloak_utils import display_cloak_section
 from logic.submit_handler import (get_classification_result, submit_text_input,
-                                  submit_uploaded_file)
-from utils.access import check_password
+                                  submit_uploaded_file, get_elapsed_processing_time)
 from utils.ui_helpers import create_custom_divider, set_stcode_style, show_classifications
 from dotenv import load_dotenv
-
-# if not check_password():
-#     st.stop()
 
 load_dotenv()
 
@@ -35,7 +31,9 @@ with st.expander("IMPORTANT NOTICE"):
     Furthermore, please be aware that the LLM may generate inaccurate or incorrect information. You assume full responsibility for how you use any generated output.
     Always consult with qualified professionals for accurate and personalized advice.""")
 
+# Input Section
 st.subheader("Enter your text or upload a file for classification")
+st.markdown(f":blue-badge[{os.getenv('LLM_MODEL')}] :green-badge[{os.getenv('EMBEDDING_MODEL')}]")
 
 tab1, tab2 = st.tabs(["Text Input", "File Upload"])
 
@@ -61,7 +59,10 @@ with tab2:
         submitted = st.form_submit_button(
             "Submit", on_click=submit_uploaded_file)
 
+# Classification Results Section
 if st.session_state.get("submitted"):
+    st.success(f"Classification completed in: {get_elapsed_processing_time()} seconds. ")
+    
     st.divider()
     st.subheader("Classification Results")
     with st.popover("Classifications"):
@@ -87,6 +88,7 @@ if st.session_state.get("submitted"):
         st.code(st.session_state.get("sensitivity_reasoning", "N/A"),
                 language=None, wrap_lines=True)
 
+    # Downgrade your Classification Section
     last_submitted_mode = st.session_state.get("submitted_mode")
     if last_submitted_mode == "text" or (last_submitted_mode == "file" and st.session_state.get("file_extension") == ".txt"):
         st.divider()
@@ -97,8 +99,9 @@ if st.session_state.get("submitted"):
                 "document_text", ""), unsafe_allow_html=True)
 
     st.divider()
-    # display_cloak_section()
 
+    # Cloak Section
+    # display_cloak_section()
 
 
 if is_local :
