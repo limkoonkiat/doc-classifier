@@ -210,3 +210,6 @@ __marimo__/
 .streamlit/secrets.toml
 data/documents.txt
 data/~$ta Classification Guide.docx
+
+# Chromadb
+chroma_db/
