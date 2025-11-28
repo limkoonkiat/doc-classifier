@@ -43,7 +43,7 @@ with tab1:
         st.subheader("Enter your text")
         if "saved_text_input" in st.session_state:
             st.session_state["text_input"] = st.session_state["saved_text_input"]
-        st.text_area("", height=200, key="text_input")
+        st.text_area(" ", height=200, key="text_input")
         submitted = st.form_submit_button(
             "Submit", on_click=submit_text_input)
 

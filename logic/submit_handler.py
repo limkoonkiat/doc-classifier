@@ -73,7 +73,7 @@ def submit_uploaded_file():
 
 
 def save_result(response):
-    json_string = extract_curly_only(response["answer"])
+    json_string = clean_json_input(response["answer"])
     json_output = json.loads(json_string)
     st.session_state["security_classification"] = json_output.get(
         "security_classification", "")
@@ -87,13 +87,13 @@ def save_result(response):
         "document_text", ""))
 
 
-def extract_curly_only(text):
+def clean_json_input(text):
     start = text.find("{")
     end = text.rfind("}")
     if start != -1 and end != -1 and start < end:
-        return text[start:end + 1]
-    else:
-        return text
+        text = text[start:end + 1]
+    text = text.replace("\\", "")
+    return text
 
 
 def clean_text_for_markdown(text):

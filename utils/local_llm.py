@@ -9,14 +9,15 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import (ChatPromptTemplate, MessagesPlaceholder,
                                PromptTemplate)
 from langchain.retrievers.multi_query import MultiQueryRetriever
-from langchain_ollama.llms import OllamaLLM
+from langchain_ollama import OllamaLLM
+
 import logging
 
 # Set up logging to show in terminal
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.DEBUG)
-logging.getLogger("langchain.chains").setLevel(logging.DEBUG)
-logging.getLogger("langchain_ollama").setLevel(logging.DEBUG)
+# logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+# logging.getLogger("langchain.retrievers.multi_query").setLevel(logging.INFO)
+# logging.getLogger("langchain.chains").setLevel(logging.INFO)
+# logging.getLogger("langchain_ollama").setLevel(logging.INFO)
 
 load_dotenv(override=True)
 
